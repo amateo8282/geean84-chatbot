@@ -1,16 +1,71 @@
-# React + Vite
+# 인생84
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+기안84 페르소나 챗봇. 기안84의 솔직하고 따뜻한 말투로 대화할 수 있습니다.
 
-Currently, two official plugins are available:
+## 기술 스택
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 19 + Vite
+- Tailwind CSS v4
+- Framer Motion
+- Google Gemini API
 
-## React Compiler
+## 시작하기
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. 의존성 설치
 
-## Expanding the ESLint configuration
+```bash
+npm install
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 2. API 키 설정
+
+```bash
+cp .env.example .env
+```
+
+`.env` 파일에 Gemini API 키 입력:
+
+```
+VITE_GEMINI_API_KEY=your_api_key_here
+```
+
+API 키는 [Google AI Studio](https://aistudio.google.com/apikey)에서 발급받을 수 있습니다.
+
+### 3. 개발 서버 실행
+
+```bash
+npm run dev
+```
+
+http://localhost:5173 접속
+
+## 빌드
+
+```bash
+npm run build
+```
+
+## 프로젝트 구조
+
+```
+src/
+├── components/
+│   ├── ChatContainer.jsx   # 채팅 컨테이너
+│   ├── ChatInput.jsx       # 입력창
+│   ├── DrawnBorder.jsx     # 손그림 스타일 테두리
+│   ├── FloatingImage.jsx   # 배경 플로팅 이미지
+│   └── MessageBubble.jsx   # 메시지 말풍선
+├── hooks/
+│   └── useGemini.js        # Gemini API 훅
+├── lib/
+│   ├── gemini.js           # Gemini API 클라이언트
+│   └── systemPrompt.js     # 기안84 말투 프롬프트
+├── App.jsx
+├── App.css
+├── index.css
+└── main.jsx
+```
+
+## 라이선스
+
+MIT
