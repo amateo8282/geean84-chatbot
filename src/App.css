@@ -1,0 +1,42 @@
+/* 커스텀 스크롤바 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+/* 텍스트 선택 색상 */
+::selection {
+  background: rgba(100, 100, 100, 0.2);
+}
+
+/* 포커스 아웃라인 제거 (접근성 고려하여 키보드 네비게이션 시에만 표시) */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid #333;
+  outline-offset: 2px;
+}
+
+/* 부드러운 스크롤 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 모바일 터치 하이라이트 제거 */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
