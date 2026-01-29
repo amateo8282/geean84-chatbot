@@ -128,10 +128,10 @@ export function ChatInput({ onSend, disabled = false }) {
           placeholder="뭐든 물어봐요..."
           disabled={disabled}
           rows={1}
-          className="flex-1 resize-none bg-transparent outline-none text-lg placeholder-gray-400"
+          className="flex-1 resize-none bg-transparent outline-none text-xl placeholder-gray-400"
           style={{
             fontFamily: "'Nanum Pen Script', cursive",
-            fontSize: '1.25rem',
+            fontSize: '1.5rem',
             lineHeight: '1.6',
             maxHeight: '120px',
             filter: 'none'
@@ -145,14 +145,14 @@ export function ChatInput({ onSend, disabled = false }) {
           className="flex-shrink-0 px-4 py-2 bg-gray-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-gray-700"
           style={{
             fontFamily: "'Nanum Pen Script', cursive",
-            fontSize: '1.1rem',
+            fontSize: '1.3rem',
             border: '1px solid black'
           }}
         >
           보내기
         </motion.button>
       </div>
-      <p className="text-xs text-gray-400 mt-2 text-center font-sans">
+      <p className="text-sm text-gray-400 mt-2 text-center font-sans">
         Shift + Enter로 줄바꿈 | 5MB 이하 파일 가능
       </p>
     </form>

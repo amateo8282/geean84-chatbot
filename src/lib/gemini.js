@@ -15,8 +15,10 @@ export function initializeGemini() {
 
   genAI = new GoogleGenerativeAI(API_KEY);
   model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash-lite',
-    systemInstruction: systemPrompt,
+    model: 'gemini-2.0-flash',
+    systemInstruction: {
+      parts: [{ text: systemPrompt }],
+    },
   });
 
   chat = model.startChat({

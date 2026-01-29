@@ -14,7 +14,7 @@ export function MessageBubble({ message, isUser }) {
         <motion.div
           initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
           animate={{ opacity: 1, scale: 1.2, rotate: 0 }}
-          className="absolute -top-6 -left-6 z-20 text-2xl font-bold bg-white/80 p-1 rounded transform -rotate-12 pointer-events-none border border-black"
+          className="absolute -top-6 -left-6 z-20 text-3xl font-bold bg-white/80 p-1 rounded transform -rotate-12 pointer-events-none border border-black"
           style={{
             fontFamily: "'Nanum Pen Script', cursive",
             color: '#000',
@@ -28,13 +28,13 @@ export function MessageBubble({ message, isUser }) {
       <BubbleBorder isUser={isUser} className="max-w-[80%] md:max-w-[70%]">
         <div className="px-4 py-3">
           {!isUser && (
-            <div className="text-xs text-gray-500 mb-1 font-sans">기안84</div>
+            <div className="text-sm text-gray-500 mb-1 font-sans">기안84</div>
           )}
           <p
-            className="text-lg leading-relaxed whitespace-pre-wrap break-words"
+            className="text-xl leading-relaxed whitespace-pre-wrap break-words"
             style={{
               fontFamily: "'Nanum Pen Script', cursive",
-              fontSize: '1.25rem',
+              fontSize: '1.5rem',
               lineHeight: '1.8',
             }}
           >
