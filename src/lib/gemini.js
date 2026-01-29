@@ -45,7 +45,7 @@ export async function sendMessage(message) {
   return response.text();
 }
 
-export async function* sendMessageStream(message) {
+export async function* sendMessageStream(parts) {
   if (!chat) {
     const initialized = initializeGemini();
     if (!initialized) {
@@ -53,7 +53,10 @@ export async function* sendMessageStream(message) {
     }
   }
 
-  const result = await chat.sendMessageStream(message);
+  // If parts is a string, convert to single part array
+  const finalParts = typeof parts === 'string' ? [parts] : parts;
+
+  const result = await chat.sendMessageStream(finalParts);
 
   for await (const chunk of result.stream) {
     const text = chunk.text();

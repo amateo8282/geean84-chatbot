@@ -6,8 +6,8 @@ export function useGemini() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const sendMessage = useCallback(async (userMessage) => {
-    if (!userMessage.trim() || isLoading) return;
+  const sendMessage = useCallback(async (userMessage, fileData = null) => {
+    if ((!userMessage.trim() && !fileData) || isLoading) return;
 
     setError(null);
 
@@ -16,6 +16,7 @@ export function useGemini() {
       id: Date.now(),
       role: 'user',
       content: userMessage,
+      file: fileData ? { name: fileData.name, type: fileData.type } : null
     };
 
     setMessages(prev => [...prev, userMsg]);
@@ -32,8 +33,20 @@ export function useGemini() {
     setMessages(prev => [...prev, aiMsg]);
 
     try {
+      // Gemini API 파츠 구성
+      const parts = [];
+      if (userMessage.trim()) parts.push({ text: userMessage });
+      if (fileData) {
+        parts.push({
+          inlineData: {
+            data: fileData.base64,
+            mimeType: fileData.type
+          }
+        });
+      }
+
       // 스트리밍 응답 처리
-      for await (const chunk of sendMessageStream(userMessage)) {
+      for await (const chunk of sendMessageStream(parts)) {
         setMessages(prev =>
           prev.map(msg =>
             msg.id === aiMsgId
@@ -46,7 +59,7 @@ export function useGemini() {
       console.error('Gemini API 오류:', err);
       setError(err.message || '응답을 받는 중 오류가 발생했습니다.');
 
-      // 에러 시 빈 AI 메시지 제거
+      // 에러 시 생성된 AI 메시지 제거
       setMessages(prev => prev.filter(msg => msg.id !== aiMsgId));
     } finally {
       setIsLoading(false);

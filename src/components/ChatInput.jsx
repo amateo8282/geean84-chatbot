@@ -3,7 +3,9 @@ import { motion } from 'framer-motion';
 
 export function ChatInput({ onSend, disabled = false }) {
   const [input, setInput] = useState('');
+  const [file, setFile] = useState(null);
   const textareaRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // 텍스트 영역 자동 높이 조절
   useEffect(() => {
@@ -13,11 +15,35 @@ export function ChatInput({ onSend, disabled = false }) {
     }
   }, [input]);
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
+
+    // 5MB 용량 제한
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      alert('파일 크기는 5MB 이하여야 합니다.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFile({
+        name: selectedFile.name,
+        type: selectedFile.type,
+        base64: reader.result.split(',')[1],
+        preview: selectedFile.type.startsWith('image/') ? reader.result : null
+      });
+    };
+    reader.readAsDataURL(selectedFile);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (input.trim() && !disabled) {
-      onSend(input.trim());
+    if ((input.trim() || file) && !disabled) {
+      onSend(input.trim(), file);
       setInput('');
+      setFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -30,6 +56,34 @@ export function ChatInput({ onSend, disabled = false }) {
 
   return (
     <form onSubmit={handleSubmit} className="relative">
+      {/* 파일 업로드 미리보기 */}
+      {file && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute bottom-full left-0 mb-4 p-2 bg-white border-2 border-black rounded-lg shadow-[4px_4px_0px_rgba(0,0,0,0.1)] flex items-center gap-2 z-20"
+          style={{ filter: 'url(#input-sketchy)' }}
+        >
+          {file.preview ? (
+            <img src={file.preview} alt="preview" className="w-12 h-12 object-cover rounded border border-gray-300" />
+          ) : (
+            <div className="w-12 h-12 bg-gray-100 flex items-center justify-center rounded border border-gray-300 text-xs text-center font-sans overflow-hidden">
+              {file.name.split('.').pop().toUpperCase()}
+            </div>
+          )}
+          <div className="flex flex-col">
+            <span className="text-sm font-sans truncate max-w-[150px]">{file.name}</span>
+            <button
+              type="button"
+              onClick={() => { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
+              className="text-xs text-red-500 hover:text-red-700 text-left underline font-sans"
+            >
+              제거
+            </button>
+          </div>
+        </motion.div>
+      )}
+
       {/* SVG Sketchy Filter for Input */}
       <svg width="0" height="0" className="absolute pointer-events-none">
         <defs>
@@ -49,6 +103,23 @@ export function ChatInput({ onSend, disabled = false }) {
           filter: 'url(#input-sketchy)'
         }}
       >
+        {/* 파일 업로드 버튼 */}
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="flex-shrink-0 w-10 h-10 flex items-center justify-center border-2 border-black rounded-full hover:bg-gray-100 transition-colors mb-1"
+          disabled={disabled}
+        >
+          <span className="text-2xl font-bold leading-none">+</span>
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          onChange={handleFileChange}
+          accept="image/*,application/pdf,text/*"
+        />
+
         <textarea
           ref={textareaRef}
           value={input}
@@ -63,15 +134,15 @@ export function ChatInput({ onSend, disabled = false }) {
             fontSize: '1.25rem',
             lineHeight: '1.6',
             maxHeight: '120px',
-            filter: 'none' // Don't filter text itself to keep it readable
+            filter: 'none'
           }}
         />
         <motion.button
           type="submit"
-          disabled={disabled || !input.trim()}
+          disabled={disabled || (!input.trim() && !file)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="flex-shrink-0 px-4 py-2 bg-gray-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-gray-700"
+          className="flex-shrink-0 px-4 py-2 bg-gray-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-gray-700 mb-1"
           style={{
             fontFamily: "'Nanum Pen Script', cursive",
             fontSize: '1.1rem',
@@ -82,7 +153,7 @@ export function ChatInput({ onSend, disabled = false }) {
         </motion.button>
       </div>
       <p className="text-xs text-gray-400 mt-2 text-center font-sans">
-        Shift + Enter로 줄바꿈
+        Shift + Enter로 줄바꿈 | 5MB 이하 파일 가능
       </p>
     </form>
   );

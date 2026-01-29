@@ -38,6 +38,14 @@ export function MessageBubble({ message, isUser }) {
               lineHeight: '1.8',
             }}
           >
+            {/* 파일 첨부 표시 */}
+            {isUser && message.file && (
+              <div className="mb-2 p-2 bg-gray-100 border-2 border-dashed border-black rounded flex items-center gap-2 text-sm font-sans">
+                <span className="bg-black text-white px-2 py-0.5 rounded text-xs">FILE</span>
+                <span className="truncate max-w-[200px]">{message.file.name}</span>
+              </div>
+            )}
+
             {message.content}
             {/* 타이핑 커서 효과 (로딩 중일 때) */}
             {!isUser && message.content === '' && (

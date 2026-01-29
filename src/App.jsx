@@ -15,8 +15,8 @@ function App() {
   }, [initialize]);
 
   // 제안 버튼 클릭 핸들러를 위해 ChatContainer에 전달
-  const handleSend = (message) => {
-    sendMessage(message);
+  const handleSend = (message, fileData) => {
+    sendMessage(message, fileData);
   };
 
   return (
