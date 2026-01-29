@@ -40,7 +40,7 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
 
         <div className="pl-4">
           <h1
-            className="text-5xl font-bold tracking-tight text-gray-900"
+            className="text-4xl font-bold tracking-tight text-gray-900"
             style={{
               fontFamily: "'Nanum Pen Script', cursive",
               textShadow: '1px 1px 0px white, 2px 2px 0px rgba(0,0,0,0.1)'
@@ -48,7 +48,7 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
           >
             인생84
           </h1>
-          <p className="text-base text-gray-600 font-sans italic">기안84 페르소나 챗봇</p>
+          <p className="text-sm text-gray-600 font-sans italic">기안84 페르소나 챗봇</p>
         </div>
 
         <div className="pr-4">
@@ -57,7 +57,7 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
               whileHover={{ scale: 1.05, rotate: 1 }}
               whileTap={{ scale: 0.95 }}
               onClick={onClear}
-              className="px-4 py-1.5 text-base bg-gray-100 border-2 border-black rounded shadow-[2px_2px_0px_black] hover:bg-white transition-all font-sans"
+              className="px-4 py-1.5 text-sm bg-gray-100 border-2 border-black rounded shadow-[2px_2px_0px_black] hover:bg-white transition-all font-sans"
             >
               대화 초기화
             </motion.button>
@@ -93,7 +93,7 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center text-red-500 text-base font-sans py-2"
+            className="text-center text-red-500 text-sm font-sans py-2"
           >
             {error}
           </motion.div>
@@ -141,13 +141,13 @@ function EmptyState({ onSuggestionClick }) {
         </div>
 
         <p
-          className="text-5xl mb-2"
+          className="text-4xl mb-2"
           style={{ fontFamily: "'Nanum Pen Script', cursive" }}
         >
           안녕하세요
         </p>
         <p
-          className="text-3xl text-gray-600 mb-8"
+          className="text-2xl text-gray-600 mb-8"
           style={{ fontFamily: "'Nanum Pen Script', cursive" }}
         >
           뭐든 편하게 물어봐요
@@ -163,8 +163,8 @@ function EmptyState({ onSuggestionClick }) {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => onSuggestionClick(text)}
-              className="px-4 py-2 text-base bg-white border-2 border-gray-300 rounded-full hover:border-gray-400 transition-colors"
-              style={{ fontFamily: "'Nanum Pen Script', cursive", fontSize: '1.2rem' }}
+              className="px-3 py-2 text-sm bg-white border-2 border-gray-300 rounded-full hover:border-gray-400 transition-colors"
+              style={{ fontFamily: "'Nanum Pen Script', cursive", fontSize: '1rem' }}
             >
               {text}
             </motion.button>
@@ -200,8 +200,8 @@ function SuggestionButtons({ onSuggestionClick }) {
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => onSuggestionClick(text)}
-          className="px-4 py-2 text-base bg-white border-2 border-gray-300 rounded-full hover:border-gray-400 transition-colors"
-          style={{ fontFamily: "'Nanum Pen Script', cursive", fontSize: '1.2rem' }}
+          className="px-3 py-2 text-sm bg-white border-2 border-gray-300 rounded-full hover:border-gray-400 transition-colors"
+          style={{ fontFamily: "'Nanum Pen Script', cursive", fontSize: '1rem' }}
         >
           {text}
         </motion.button>
