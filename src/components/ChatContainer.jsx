@@ -13,30 +13,56 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
 
   return (
     <div
-      className="flex flex-col h-full max-w-2xl mx-auto"
+      className="flex flex-col h-full max-w-2xl mx-auto relative overflow-hidden"
       style={{ minHeight: '100dvh' }}
     >
+      {/* 배경 이미지 (Vintage Room) */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: "url('/assets/kian84_background.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.15,
+          filter: 'sepia(0.3) contrast(1.2)'
+        }}
+      />
+
+      {/* Overlay to ensure text readability if needed */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none bg-white/30"
+      />
       {/* 헤더 */}
-      <header className="flex items-center justify-between p-4 border-b-2 border-gray-300">
-        <div>
+      <header className="relative z-10 flex items-center justify-between p-4 mb-2">
+        {/* Sketchy Header Background */}
+        <div className="absolute inset-x-4 inset-y-2 -z-10 bg-white border-2 border-black transform -rotate-1 shadow-[4px_4px_0px_#333]"
+          style={{ filter: 'url(#sketchy)' }} />
+
+        <div className="pl-4">
           <h1
-            className="text-3xl font-bold"
-            style={{ fontFamily: "'Nanum Pen Script', cursive" }}
+            className="text-4xl font-bold tracking-tight text-gray-900"
+            style={{
+              fontFamily: "'Nanum Pen Script', cursive",
+              textShadow: '1px 1px 0px white, 2px 2px 0px rgba(0,0,0,0.1)'
+            }}
           >
             인생84
           </h1>
-          <p className="text-sm text-gray-500 font-sans">기안84와 대화하기</p>
+          <p className="text-sm text-gray-600 font-sans italic">기안84 페르소나 챗봇</p>
         </div>
-        {messages.length > 0 && (
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onClear}
-            className="px-3 py-1.5 text-sm text-gray-600 border-2 border-gray-300 rounded-lg hover:bg-gray-100 transition-colors font-sans"
-          >
-            대화 초기화
-          </motion.button>
-        )}
+
+        <div className="pr-4">
+          {messages.length > 0 && (
+            <motion.button
+              whileHover={{ scale: 1.05, rotate: 1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onClear}
+              className="px-4 py-1.5 text-sm bg-gray-100 border-2 border-black rounded shadow-[2px_2px_0px_black] hover:bg-white transition-all font-sans"
+            >
+              대화 초기화
+            </motion.button>
+          )}
+        </div>
       </header>
 
       {/* 메시지 영역 */}
@@ -92,8 +118,18 @@ function EmptyState({ onSuggestionClick }) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center"
+        className="text-center flex flex-col items-center"
       >
+        {/* 기안84 캐릭터 - 빈 상태일 때 보여줌 */}
+        <div className="relative w-48 h-48 mb-6">
+          <img
+            src="/assets/kian84_character.png"
+            alt="Kian84 Character"
+            className="w-full h-full object-contain filter "
+            style={{ filter: 'drop-shadow(5px 5px 0px rgba(0,0,0,0.1))' }}
+          />
+        </div>
+
         <p
           className="text-4xl mb-2"
           style={{ fontFamily: "'Nanum Pen Script', cursive" }}

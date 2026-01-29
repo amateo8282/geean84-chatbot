@@ -30,12 +30,23 @@ export function ChatInput({ onSend, disabled = false }) {
 
   return (
     <form onSubmit={handleSubmit} className="relative">
+      {/* SVG Sketchy Filter for Input */}
+      <svg width="0" height="0" className="absolute pointer-events-none">
+        <defs>
+          <filter id="input-sketchy">
+            <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="2" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
+          </filter>
+        </defs>
+      </svg>
+
       <div
-        className="flex items-end gap-2 p-3 bg-white"
+        className="relative flex items-end gap-2 p-3 bg-white"
         style={{
-          border: '2px solid #333',
+          border: '2px solid var(--color-primary)',
           borderRadius: '16px',
           boxShadow: '3px 3px 0px rgba(0,0,0,0.1)',
+          filter: 'url(#input-sketchy)'
         }}
       >
         <textarea
@@ -52,6 +63,7 @@ export function ChatInput({ onSend, disabled = false }) {
             fontSize: '1.25rem',
             lineHeight: '1.6',
             maxHeight: '120px',
+            filter: 'none' // Don't filter text itself to keep it readable
           }}
         />
         <motion.button
@@ -63,6 +75,7 @@ export function ChatInput({ onSend, disabled = false }) {
           style={{
             fontFamily: "'Nanum Pen Script', cursive",
             fontSize: '1.1rem',
+            border: '1px solid black'
           }}
         >
           보내기
