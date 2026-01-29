@@ -14,10 +14,12 @@
 2. **이미지 생성 (2026-01-29 완료)**: 
    - `kian84_background.png`: 빈티지한 원룸 배경 생성 및 `ChatContainer` 배경으로 적용(투명도 0.15).
    - `kian84_character.png`: 우기명 스타일 캐릭터 생성 및 채팅 초기 화면(`EmptyState`)에 배치 완료.
+   - `gimyeong.png`, `jieun.png`: 우기명, 봉지은 캐릭터 생성 및 화면 양측 하단에 고정 배치(Fixed) 완료.
 3. **컴포넌트 구현 (2026-01-29 완료)**: 
    - `src/index.css`: 디자인 시스템 컬러 변수(빈티지 톤) 및 폰트 설정 적용.
    - `DrawnBorder`: SVG 필터(`feTurbulence`)를 활용한 거친 선 효과 구현 및 `BubbleBorder`에 SVG/Tail 적용.
    - `MessageBubble`: 웹툰형 말풍선 꼬리 및 랜덤 효과음('두둥', '슥..') 데코레이션 추가 완료.
+   - `App.jsx`: 배경 캐릭터(우기명, 봉지은) 고정 배치 및 반응형 처리 완료.
 
 ### 다음 단계 (Next Session)
 - **전체 UI 룩앤필 최종 점검**: 실제 브라우저에서 배경과 캐릭터, 말풍선이 조화로운지 확인.
