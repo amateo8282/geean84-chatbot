@@ -126,7 +126,10 @@ function EmptyState({ onSuggestionClick }) {
             src="/assets/kian84_character.png"
             alt="Kian84 Character"
             className="w-full h-full object-contain filter "
-            style={{ filter: 'drop-shadow(5px 5px 0px rgba(0,0,0,0.1))' }}
+            style={{
+              filter: 'drop-shadow(5px 5px 0px rgba(0,0,0,0.1))',
+              mixBlendMode: 'multiply'
+            }}
           />
         </div>
 
