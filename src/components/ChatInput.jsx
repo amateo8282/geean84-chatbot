@@ -95,7 +95,7 @@ export function ChatInput({ onSend, disabled = false }) {
       </svg>
 
       <div
-        className="relative flex items-end gap-2 p-3 bg-white"
+        className="relative flex items-center gap-2 p-3 bg-white"
         style={{
           border: '2px solid var(--color-primary)',
           borderRadius: '16px',
@@ -107,7 +107,7 @@ export function ChatInput({ onSend, disabled = false }) {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex-shrink-0 w-10 h-10 flex items-center justify-center border-2 border-black rounded-full hover:bg-gray-100 transition-colors mb-1"
+          className="flex-shrink-0 w-10 h-10 flex items-center justify-center border-2 border-black rounded-full hover:bg-gray-100 transition-colors"
           disabled={disabled}
         >
           <span className="text-2xl font-bold leading-none">+</span>
@@ -142,7 +142,7 @@ export function ChatInput({ onSend, disabled = false }) {
           disabled={disabled || (!input.trim() && !file)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="flex-shrink-0 px-4 py-2 bg-gray-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-gray-700 mb-1"
+          className="flex-shrink-0 px-4 py-2 bg-gray-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-gray-700"
           style={{
             fontFamily: "'Nanum Pen Script', cursive",
             fontSize: '1.1rem',
