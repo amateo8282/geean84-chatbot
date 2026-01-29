@@ -4,15 +4,41 @@
   font-family: 'Nanum Pen Script', cursive, system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+
+  /* Color Palette */
+  --color-bg: #F5F5F0;
+  --color-primary: #333333;
+  --color-accent-user: #E8E4D9;
+  --color-accent-bot: #FFFFFF;
+  --color-point: #FFD700;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #f5f5f0;
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  font-family: 'Nanum Pen Script', cursive;
+  overflow-x: hidden; /* Prevent horizontal scroll from rough borders */
 }
 
 * {
   box-sizing: border-box;
+}
+
+/* Scrollbar Styling for Webkit */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 5px;
+  border: 2px solid var(--color-bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
 }
