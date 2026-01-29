@@ -81,9 +81,29 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
               ))}
             </AnimatePresence>
 
-            {/* 인사말만 있을 때 제안 버튼 표시 */}
+            {/* 인사말만 있을 때 캐릭터 이미지 + 제안 버튼 표시 */}
             {messages.length === 1 && messages[0].role === 'assistant' && (
-              <SuggestionButtons onSuggestionClick={onSend} />
+              <>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2, duration: 0.4 }}
+                  className="flex justify-center my-6"
+                >
+                  <div className="relative w-40 h-40">
+                    <img
+                      src="/assets/kian84_character.png"
+                      alt="Kian84 Character"
+                      className="w-full h-full object-contain"
+                      style={{
+                        filter: 'drop-shadow(5px 5px 0px rgba(0,0,0,0.1))',
+                        mixBlendMode: 'multiply'
+                      }}
+                    />
+                  </div>
+                </motion.div>
+                <SuggestionButtons onSuggestionClick={onSend} />
+              </>
             )}
           </>
         )}
