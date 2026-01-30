@@ -68,7 +68,7 @@ export async function* sendMessageStream(parts) {
       generationConfig: {
         temperature: 0.9,
         topP: 0.95,
-        maxOutputTokens: 500,
+        maxOutputTokens: 2048,
       },
     }),
   });
