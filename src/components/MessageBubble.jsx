@@ -14,7 +14,7 @@ export function MessageBubble({ message, isUser }) {
         <motion.div
           initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
           animate={{ opacity: 1, scale: 1.2, rotate: 0 }}
-          className="absolute -top-6 -left-6 z-20 text-2xl font-bold bg-white/80 p-1 rounded transform -rotate-12 pointer-events-none border border-black"
+          className="absolute -top-4 left-2 z-20 text-2xl font-bold bg-white/80 p-1 rounded transform -rotate-12 pointer-events-none border border-black"
           style={{
             fontFamily: "'Nanum Pen Script', cursive",
             color: '#000',

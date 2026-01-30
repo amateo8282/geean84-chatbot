@@ -31,7 +31,7 @@ function App() {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5, duration: 1 }}
-          className="absolute left-[3%] bottom-[10%] w-72"
+          className="absolute left-[5%] bottom-[10%] w-64"
         >
           {/* Comic Panel Style */}
           <div className="relative p-2 bg-white border-4 border-black shadow-[8px_8px_0px_rgba(0,0,0,0.1)] transform -rotate-2"
@@ -43,7 +43,7 @@ function App() {
               style={{ mixBlendMode: 'multiply' }}
             />
             {/* Speech Bubble within Panel */}
-            <div className="absolute -top-6 -right-6 bg-yellow-300 border-2 border-black px-3 py-1 text-2xl transform rotate-6 shadow-[2px_2px_0px_black]"
+            <div className="absolute -top-4 right-0 bg-yellow-300 border-2 border-black px-3 py-1 text-xl transform rotate-6 shadow-[2px_2px_0px_black]"
               style={{ fontFamily: "'Nanum Pen Script', cursive" }}>
               집중하자 집중!!!
             </div>

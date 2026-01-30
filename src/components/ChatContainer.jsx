@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
@@ -66,9 +66,11 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
       </header>
 
       {/* 메시지 영역 */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 overflow-x-hidden">
         {messages.length === 0 ? (
           <EmptyState onSuggestionClick={onSend} />
+        ) : messages.length === 1 && messages[0].role === 'assistant' ? (
+          <GreetingIntro message={messages[0]} onSuggestionClick={onSend} />
         ) : (
           <>
             <AnimatePresence mode="popLayout">
@@ -80,31 +82,6 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
                 />
               ))}
             </AnimatePresence>
-
-            {/* 인사말만 있을 때 캐릭터 이미지 + 제안 버튼 표시 */}
-            {messages.length === 1 && messages[0].role === 'assistant' && (
-              <>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2, duration: 0.4 }}
-                  className="flex justify-center my-6"
-                >
-                  <div className="relative w-40 h-40">
-                    <img
-                      src="/assets/kian84_character.png"
-                      alt="Kian84 Character"
-                      className="w-full h-full object-contain"
-                      style={{
-                        filter: 'drop-shadow(5px 5px 0px rgba(0,0,0,0.1))',
-                        mixBlendMode: 'multiply'
-                      }}
-                    />
-                  </div>
-                </motion.div>
-                <SuggestionButtons onSuggestionClick={onSend} />
-              </>
-            )}
           </>
         )}
 
@@ -126,6 +103,57 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
       <div className="p-4 border-t-2 border-gray-300 bg-[#f5f5f0]">
         <ChatInput onSend={onSend} disabled={isLoading} />
       </div>
+    </div>
+  );
+}
+
+// 인사말 인트로 컴포넌트 (말풍선 → 이미지 순서)
+function GreetingIntro({ message, onSuggestionClick }) {
+  const [showImage, setShowImage] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowImage(true), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center pt-4 overflow-visible">
+      {/* 말풍선 먼저 등장 */}
+      <motion.div
+        initial={{ opacity: 0, y: 15, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="w-full mb-4"
+      >
+        <MessageBubble message={message} isUser={false} />
+      </motion.div>
+
+      {/* 기안84 캐릭터 이미지 (말풍선 후 등장) */}
+      <AnimatePresence>
+        {showImage && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="w-48 h-48 mb-4"
+          >
+            <img
+              src="/assets/kian84_character.png"
+              alt="기안84"
+              className="w-full h-full object-contain"
+              style={{
+                filter: 'drop-shadow(4px 4px 0px rgba(0,0,0,0.1))',
+                mixBlendMode: 'multiply',
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 제안 버튼 (이미지 후 나타남) */}
+      {showImage && (
+        <SuggestionButtons onSuggestionClick={onSuggestionClick} />
+      )}
     </div>
   );
 }
