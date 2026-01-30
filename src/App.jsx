@@ -10,7 +10,7 @@ function App() {
   useEffect(() => {
     const success = initialize();
     if (!success) {
-      console.warn('Gemini API가 초기화되지 않았습니다. .env 파일에 API 키를 설정하세요.');
+      console.warn('OpenAI API가 초기화되지 않았습니다. .env 파일에 API 키를 설정하세요.');
     }
   }, [initialize]);
 

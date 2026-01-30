@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { sendMessageStream, resetChat, initializeGemini } from '../lib/gemini';
+import { sendMessageStream, resetChat, initializeChat } from '../lib/openai';
 
 // 재시도 대기 중 보여줄 위트있는 메시지들 (기안84 스타일)
 const RETRY_MESSAGES = [
@@ -86,7 +86,7 @@ export function useGemini() {
         success = true;
         break;
       } catch (err) {
-        console.error(`Gemini API 오류 (시도 ${attempt + 1}/${MAX_RETRIES + 1}):`, err);
+        console.error(`OpenAI API 오류 (시도 ${attempt + 1}/${MAX_RETRIES + 1}):`, err);
 
         if (isRateLimitError(err) && attempt < MAX_RETRIES) {
           // 위트있는 재시도 메시지 표시
@@ -135,7 +135,7 @@ export function useGemini() {
   ];
 
   const initialize = useCallback(() => {
-    const success = initializeGemini();
+    const success = initializeChat();
     if (success) {
       // 화면 로드 시 기안84가 먼저 인사
       const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
