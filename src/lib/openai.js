@@ -1,15 +1,14 @@
 import { systemPrompt } from './systemPrompt';
 
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
-const API_URL = 'https://api.openai.com/v1/chat/completions';
-const MODEL = 'gpt-4o-mini';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse';
 
 let conversationHistory = [];
 let initialized = false;
 
 export function initializeChat() {
   if (!API_KEY || API_KEY === 'your_api_key_here') {
-    console.warn('OpenAI API 키가 설정되지 않았습니다. .env 파일을 확인하세요.');
+    console.warn('Gemini API 키가 설정되지 않았습니다. .env 파일을 확인하세요.');
     return false;
   }
 
@@ -18,41 +17,30 @@ export function initializeChat() {
   return true;
 }
 
-function buildMessages(parts) {
-  const messages = [
-    { role: 'system', content: systemPrompt },
+function buildContents(parts) {
+  const contents = [
     ...conversationHistory,
   ];
 
-  // Build user message content
-  const content = [];
+  // Build user message parts in Gemini format
+  const geminiParts = [];
 
   for (const part of parts) {
     if (part.text) {
-      content.push({ type: 'text', text: part.text });
+      geminiParts.push({ text: part.text });
     }
     if (part.inlineData) {
-      // Image support via vision API
-      const { data, mimeType } = part.inlineData;
-      if (mimeType.startsWith('image/')) {
-        content.push({
-          type: 'image_url',
-          image_url: { url: `data:${mimeType};base64,${data}` },
-        });
-      } else {
-        // For non-image files, add as text description
-        try {
-          const text = atob(data);
-          content.push({ type: 'text', text: `[첨부파일 내용]\n${text}` });
-        } catch {
-          content.push({ type: 'text', text: '[첨부파일: 읽을 수 없는 형식]' });
-        }
-      }
+      geminiParts.push({
+        inlineData: {
+          mimeType: part.inlineData.mimeType,
+          data: part.inlineData.data,
+        },
+      });
     }
   }
 
-  messages.push({ role: 'user', content });
-  return messages;
+  contents.push({ role: 'user', parts: geminiParts });
+  return contents;
 }
 
 export async function* sendMessageStream(parts) {
@@ -64,21 +52,24 @@ export async function* sendMessageStream(parts) {
   }
 
   const finalParts = typeof parts === 'string' ? [{ text: parts }] : parts;
-  const messages = buildMessages(finalParts);
+  const contents = buildContents(finalParts);
 
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`,
+      'x-goog-api-key': API_KEY,
     },
     body: JSON.stringify({
-      model: MODEL,
-      messages,
-      temperature: 0.9,
-      top_p: 0.95,
-      max_tokens: 500,
-      stream: true,
+      system_instruction: {
+        parts: [{ text: systemPrompt }],
+      },
+      contents,
+      generationConfig: {
+        temperature: 0.9,
+        topP: 0.95,
+        maxOutputTokens: 500,
+      },
     }),
   });
 
@@ -111,7 +102,7 @@ export async function* sendMessageStream(parts) {
 
       try {
         const parsed = JSON.parse(data);
-        const content = parsed.choices?.[0]?.delta?.content;
+        const content = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
         if (content) {
           fullResponse += content;
           yield content;
@@ -123,16 +114,15 @@ export async function* sendMessageStream(parts) {
   }
 
   // Save to conversation history
-  // Extract user text for history
   const userText = finalParts
     .filter(p => p.text)
     .map(p => p.text)
     .join(' ');
   if (userText) {
-    conversationHistory.push({ role: 'user', content: userText });
+    conversationHistory.push({ role: 'user', parts: [{ text: userText }] });
   }
   if (fullResponse) {
-    conversationHistory.push({ role: 'assistant', content: fullResponse });
+    conversationHistory.push({ role: 'model', parts: [{ text: fullResponse }] });
   }
 }
 

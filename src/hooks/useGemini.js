@@ -86,7 +86,7 @@ export function useGemini() {
         success = true;
         break;
       } catch (err) {
-        console.error(`OpenAI API 오류 (시도 ${attempt + 1}/${MAX_RETRIES + 1}):`, err);
+        console.error(`Gemini API 오류 (시도 ${attempt + 1}/${MAX_RETRIES + 1}):`, err);
 
         if (isRateLimitError(err) && attempt < MAX_RETRIES) {
           // 위트있는 재시도 메시지 표시
