@@ -10,6 +10,7 @@ import { useConversations } from './hooks/useConversations';
 import { useChatbots } from './hooks/useChatbots';
 import { useRAG } from './hooks/useRAG';
 import { isSupabaseConfigured } from './lib/supabase';
+import { DEFAULT_PRESET } from './lib/presetChatbots';
 
 function AppContent() {
   const {
@@ -49,9 +50,9 @@ function AppContent() {
     }
   }, [initialize]);
 
-  // Set up RAG context builder
+  // Set up RAG context builder (disabled for preset chatbots)
   useEffect(() => {
-    ragContextBuilderRef.current = activeChatbot
+    ragContextBuilderRef.current = (activeChatbot && !activeChatbot.isPreset)
       ? (userMessage) => buildRAGContext(userMessage, activeChatbot.id)
       : null;
   }, [activeChatbot, buildRAGContext, ragContextBuilderRef]);
@@ -64,7 +65,7 @@ function AppContent() {
       let convId = conversationIdRef.current;
 
       if (!convId) {
-        const chatbotId = activeChatbot?.id || null;
+        const chatbotId = (activeChatbot && !activeChatbot.isPreset) ? activeChatbot.id : null;
         const conv = await createConversation('새 대화', chatbotId);
         if (conv) {
           convId = conv.id;
@@ -86,7 +87,7 @@ function AppContent() {
   const handleNewConversation = useCallback(() => {
     setActiveConversationId(null);
     conversationIdRef.current = null;
-    startNewConversation(activeChatbot?.system_prompt || null);
+    startNewConversation(activeChatbot?.system_prompt || null, activeChatbot?.greetings);
   }, [activeChatbot, setActiveConversationId, startNewConversation]);
 
   const handleSelectConversation = useCallback(async (convId) => {
@@ -100,7 +101,7 @@ function AppContent() {
       ? chatbots.find(b => b.id === conv.chatbot_id)
       : null;
 
-    if (chatbot) setActiveChatbot(chatbot);
+    setActiveChatbot(chatbot || DEFAULT_PRESET);
     loadConversation(msgs, chatbot?.system_prompt || null);
   }, [activeConversationId, conversations, chatbots, loadMessages, loadConversation, setActiveConversationId, setActiveChatbot]);
 
@@ -113,7 +114,7 @@ function AppContent() {
     setActiveChatbot(chatbot);
     setActiveConversationId(null);
     conversationIdRef.current = null;
-    startNewConversation(chatbot?.system_prompt || null);
+    startNewConversation(chatbot?.system_prompt || null, chatbot?.greetings);
   }, [setActiveChatbot, setActiveConversationId, startNewConversation]);
 
   const handleCreateChatbot = useCallback(() => {
@@ -123,22 +124,23 @@ function AppContent() {
 
   const chatbotName = activeChatbot?.name || '기안84';
   const chatbotEmoji = activeChatbot?.avatar_emoji || '✏️';
+  const suggestions = activeChatbot?.suggestions || DEFAULT_PRESET.suggestions;
 
   return (
     <>
       {/* 배경 플로팅 이미지 */}
       <FloatingImages />
 
-      {/* 우기명 & 봉지은 고정 캐릭터 (데스크탑 전용) */}
+      {/* 우기명 & 봉지은 고정 캐릭터 (데스크탑 전용, 좌우 대칭) */}
       <div className="fixed inset-0 pointer-events-none z-10 hidden xl:block">
-        {/* 우기명 (좌측) */}
+        {/* 우기명 (메인 영역 좌측 하단 — 사이드바 바로 오른쪽) */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5, duration: 1 }}
-          className="absolute left-[5%] bottom-[10%] w-64"
+          className="absolute left-[18.5rem] bottom-4 w-44"
         >
-          <div className="relative p-2 bg-white border-4 border-black shadow-[8px_8px_0px_rgba(0,0,0,0.1)] transform -rotate-2"
+          <div className="relative p-1.5 bg-white border-4 border-black shadow-[6px_6px_0px_rgba(0,0,0,0.1)] transform -rotate-2"
             style={{ filter: 'url(#sketchy)' }}>
             <img
               src="/assets/gimyeong.png"
@@ -146,21 +148,21 @@ function AppContent() {
               className="w-full h-auto"
               style={{ mixBlendMode: 'multiply' }}
             />
-            <div className="absolute -top-4 right-0 bg-yellow-300 border-2 border-black px-3 py-1 text-xl transform rotate-6 shadow-[2px_2px_0px_black]"
+            <div className="absolute -top-4 -right-4 bg-yellow-300 border-2 border-black px-2 py-0.5 text-lg transform rotate-6 shadow-[2px_2px_0px_black]"
               style={{ fontFamily: "'Nanum Pen Script', cursive" }}>
               집중하자 집중!!!
             </div>
           </div>
         </motion.div>
 
-        {/* 봉지은 (우측) */}
+        {/* 봉지은 (우측 하단) */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.7, duration: 1 }}
-          className="absolute right-[3%] bottom-[10%] w-80"
+          className="absolute right-2 bottom-4 w-44"
         >
-          <div className="relative p-2 bg-white border-4 border-black shadow-[8px_8px_0px_rgba(0,0,0,0.1)] transform rotate-2"
+          <div className="relative p-1.5 bg-white border-4 border-black shadow-[6px_6px_0px_rgba(0,0,0,0.1)] transform rotate-2"
             style={{ filter: 'url(#sketchy)' }}>
             <img
               src="/assets/jieun.png"
@@ -168,7 +170,7 @@ function AppContent() {
               className="w-full h-auto"
               style={{ mixBlendMode: 'multiply' }}
             />
-            <div className="absolute -top-6 -left-6 bg-white border-2 border-black px-3 py-1 text-2xl transform -rotate-6 shadow-[2px_2px_0px_black]"
+            <div className="absolute -top-4 -left-4 bg-white border-2 border-black px-2 py-0.5 text-lg transform -rotate-6 shadow-[2px_2px_0px_black]"
               style={{ fontFamily: "'Nanum Pen Script', cursive" }}>
               갈게 오빠.
             </div>
@@ -196,6 +198,7 @@ function AppContent() {
           chatbotName={chatbotName}
           chatbotEmoji={chatbotEmoji}
           onToggleSidebar={toggleSidebar}
+          suggestions={suggestions}
         />
       </Layout>
 

@@ -7,6 +7,7 @@ import { TokenDisplay } from './TokenDisplay';
 export function ChatContainer({
   messages, isLoading, error, onSend, onClear,
   tokenUsage, chatbotName = '기안84', chatbotEmoji = '✏️', onToggleSidebar,
+  suggestions,
 }) {
   const messagesEndRef = useRef(null);
 
@@ -93,9 +94,9 @@ export function ChatContainer({
       {/* 메시지 영역 */}
       <div className="flex-1 overflow-y-auto p-4 overflow-x-hidden">
         {messages.length === 0 ? (
-          <EmptyState onSuggestionClick={onSend} />
+          <EmptyState onSuggestionClick={onSend} suggestions={suggestions} />
         ) : messages.length === 1 && messages[0].role === 'assistant' ? (
-          <GreetingIntro message={messages[0]} onSuggestionClick={onSend} />
+          <GreetingIntro message={messages[0]} onSuggestionClick={onSend} suggestions={suggestions} />
         ) : (
           <>
             <AnimatePresence mode="popLayout">
@@ -134,7 +135,7 @@ export function ChatContainer({
 }
 
 // 인사말 인트로 컴포넌트 (말풍선 → 이미지 순서)
-function GreetingIntro({ message, onSuggestionClick }) {
+function GreetingIntro({ message, onSuggestionClick, suggestions }) {
   const [showImage, setShowImage] = useState(false);
 
   useEffect(() => {
@@ -178,20 +179,14 @@ function GreetingIntro({ message, onSuggestionClick }) {
 
       {/* 제안 버튼 (이미지 후 나타남) */}
       {showImage && (
-        <SuggestionButtons onSuggestionClick={onSuggestionClick} />
+        <SuggestionButtons onSuggestionClick={onSuggestionClick} suggestions={suggestions} />
       )}
     </div>
   );
 }
 
 // 빈 상태 컴포넌트
-function EmptyState({ onSuggestionClick }) {
-  const suggestions = [
-    '요즘 너무 힘들어요',
-    '어떻게 하면 행복해질 수 있을까요?',
-    '나이 들면서 외로워요',
-    '뭘 해야 할지 모르겠어요',
-  ];
+function EmptyState({ onSuggestionClick, suggestions = [] }) {
 
   return (
     <div className="flex flex-col items-center justify-center h-full py-12">
@@ -250,14 +245,7 @@ function EmptyState({ onSuggestionClick }) {
 }
 
 // 제안 버튼 컴포넌트 (인사말 이후 표시용)
-function SuggestionButtons({ onSuggestionClick }) {
-  const suggestions = [
-    '요즘 너무 힘들어요',
-    '어떻게 하면 행복해질 수 있을까요?',
-    '나이 들면서 외로워요',
-    '뭘 해야 할지 모르겠어요',
-  ];
-
+function SuggestionButtons({ onSuggestionClick, suggestions = [] }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}

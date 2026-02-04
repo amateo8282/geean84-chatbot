@@ -1,11 +1,12 @@
 import { createContext, useContext, useState, useCallback } from 'react';
+import { DEFAULT_PRESET } from '../lib/presetChatbots';
 
 const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeConversationId, setActiveConversationId] = useState(null);
-  const [activeChatbot, setActiveChatbot] = useState(null);
+  const [activeChatbot, setActiveChatbot] = useState(DEFAULT_PRESET);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen(prev => !prev);

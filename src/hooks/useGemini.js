@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { sendMessageStream, resetChat, initializeChat, setSystemPrompt, loadHistory } from '../lib/openai';
 import { systemPrompt as defaultSystemPrompt } from '../lib/systemPrompt';
+import { DEFAULT_PRESET } from '../lib/presetChatbots';
 
 // 재시도 대기 중 보여줄 위트있는 메시지들 (기안84 스타일)
 const RETRY_MESSAGES = [
@@ -18,15 +19,6 @@ function isRateLimitError(err) {
 
 const MAX_RETRIES = 3;
 const BASE_DELAY = 5000;
-
-// 기안84 스타일 인사말 목록
-const GREETINGS = [
-  '뭐, 오늘도 하루가 시작됐네요. 힘들면 힘들다고 말해도 돼요. 다 그런 거니까.',
-  '어, 왔어요? 뭐 별일 없죠? 없어도 괜찮고, 있어도 괜찮아요. 일단 얘기해봐요.',
-  '안녕하세요. 뭐, 살다 보면 누군가한테 말하고 싶을 때가 있잖아요. 그냥 편하게요.',
-  '오늘 좀 어때요? 괜찮아도 되고, 안 괜찮아도 돼요. 뭐 다 그런 거니까.',
-  '어서 와요. 뭐, 대단한 건 못 해주지만 들어는 줄 수 있어요. 그것도 뭐 나쁘지 않잖아요?',
-];
 
 export function useGemini() {
   const [messages, setMessages] = useState([]);
@@ -183,7 +175,8 @@ export function useGemini() {
   const initialize = useCallback(() => {
     const success = initializeChat();
     if (success) {
-      const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+      const greetings = DEFAULT_PRESET.greetings;
+      const greeting = greetings[Math.floor(Math.random() * greetings.length)];
       setMessages([{
         id: Date.now(),
         role: 'assistant',
@@ -210,15 +203,16 @@ export function useGemini() {
     setError(null);
   }, []);
 
-  // Start a new conversation with optional custom system prompt
-  const startNewConversation = useCallback((customSystemPrompt) => {
+  // Start a new conversation with optional custom system prompt and greetings
+  const startNewConversation = useCallback((customSystemPrompt, greetings) => {
     setSystemPrompt(customSystemPrompt || defaultSystemPrompt);
     resetChat();
     setTokenUsage({ promptTokens: 0, completionTokens: 0, totalTokens: 0 });
     setError(null);
 
     // Show greeting
-    const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+    const greetingList = greetings || DEFAULT_PRESET.greetings;
+    const greeting = greetingList[Math.floor(Math.random() * greetingList.length)];
     setMessages([{
       id: Date.now(),
       role: 'assistant',
