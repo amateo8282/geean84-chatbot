@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 
 // 플레이스홀더 이미지들 (실제 이미지로 교체 가능)

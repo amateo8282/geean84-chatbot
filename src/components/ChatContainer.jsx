@@ -2,8 +2,12 @@ import { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
+import { TokenDisplay } from './TokenDisplay';
 
-export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
+export function ChatContainer({
+  messages, isLoading, error, onSend, onClear,
+  tokenUsage, chatbotName = '기안84', chatbotEmoji = '✏️', onToggleSidebar,
+}) {
   const messagesEndRef = useRef(null);
 
   // 새 메시지가 추가되면 스크롤
@@ -38,17 +42,35 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
         <div className="absolute inset-x-4 inset-y-2 -z-10 bg-white border-2 border-black transform -rotate-1 shadow-[4px_4px_0px_#333]"
           style={{ filter: 'url(#sketchy)' }} />
 
-        <div className="pl-4">
-          <h1
-            className="text-4xl font-bold tracking-tight text-gray-900"
-            style={{
-              fontFamily: "'Nanum Pen Script', cursive",
-              textShadow: '1px 1px 0px white, 2px 2px 0px rgba(0,0,0,0.1)'
-            }}
-          >
-            인생84
-          </h1>
-          <p className="text-sm text-gray-600 font-sans italic">기안84 페르소나 챗봇</p>
+        <div className="flex items-center gap-2 pl-2">
+          {/* 햄버거 메뉴 (모바일) */}
+          {onToggleSidebar && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onToggleSidebar}
+              className="lg:hidden p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-label="메뉴 열기"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </motion.button>
+          )}
+          <div>
+            <h1
+              className="text-4xl font-bold tracking-tight text-gray-900"
+              style={{
+                fontFamily: "'Nanum Pen Script', cursive",
+                textShadow: '1px 1px 0px white, 2px 2px 0px rgba(0,0,0,0.1)'
+              }}
+            >
+              {chatbotName === '기안84' ? '인생84' : `${chatbotEmoji} ${chatbotName}`}
+            </h1>
+            <p className="text-sm text-gray-600 font-sans italic">{chatbotName} 페르소나 챗봇</p>
+          </div>
         </div>
 
         <div className="pr-4">
@@ -59,11 +81,14 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
               onClick={onClear}
               className="px-4 py-1.5 text-sm bg-gray-100 border-2 border-black rounded shadow-[2px_2px_0px_black] hover:bg-white transition-all font-sans"
             >
-              대화 초기화
+              새 대화
             </motion.button>
           )}
         </div>
       </header>
+
+      {/* 토큰 사용량 표시 */}
+      {tokenUsage && <div className="relative z-10"><TokenDisplay tokenUsage={tokenUsage} /></div>}
 
       {/* 메시지 영역 */}
       <div className="flex-1 overflow-y-auto p-4 overflow-x-hidden">
@@ -79,6 +104,7 @@ export function ChatContainer({ messages, isLoading, error, onSend, onClear }) {
                   key={message.id}
                   message={message}
                   isUser={message.role === 'user'}
+                  chatbotName={chatbotName}
                 />
               ))}
             </AnimatePresence>

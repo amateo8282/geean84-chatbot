@@ -1,10 +1,11 @@
-import { systemPrompt } from './systemPrompt';
+import { systemPrompt as defaultSystemPrompt } from './systemPrompt';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse';
 
 let conversationHistory = [];
 let initialized = false;
+let currentSystemPrompt = defaultSystemPrompt;
 
 export function initializeChat() {
   if (!API_KEY || API_KEY === 'your_api_key_here') {
@@ -17,12 +18,19 @@ export function initializeChat() {
   return true;
 }
 
+export function setSystemPrompt(prompt) {
+  currentSystemPrompt = prompt || defaultSystemPrompt;
+}
+
+export function loadHistory(history) {
+  conversationHistory = history || [];
+}
+
 function buildContents(parts) {
   const contents = [
     ...conversationHistory,
   ];
 
-  // Build user message parts in Gemini format
   const geminiParts = [];
 
   for (const part of parts) {
@@ -43,6 +51,7 @@ function buildContents(parts) {
   return contents;
 }
 
+// Yields { text, usageMetadata } objects
 export async function* sendMessageStream(parts) {
   if (!initialized) {
     const success = initializeChat();
@@ -62,7 +71,7 @@ export async function* sendMessageStream(parts) {
     },
     body: JSON.stringify({
       system_instruction: {
-        parts: [{ text: systemPrompt }],
+        parts: [{ text: currentSystemPrompt }],
       },
       contents,
       generationConfig: {
@@ -84,6 +93,7 @@ export async function* sendMessageStream(parts) {
   const decoder = new TextDecoder();
   let buffer = '';
   let fullResponse = '';
+  let lastUsageMetadata = null;
 
   while (true) {
     const { done, value } = await reader.read();
@@ -103,14 +113,24 @@ export async function* sendMessageStream(parts) {
       try {
         const parsed = JSON.parse(data);
         const content = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (parsed.usageMetadata) {
+          lastUsageMetadata = parsed.usageMetadata;
+        }
+
         if (content) {
           fullResponse += content;
-          yield content;
+          yield { text: content, usageMetadata: null };
         }
       } catch {
         // skip malformed JSON
       }
     }
+  }
+
+  // Yield final usage metadata
+  if (lastUsageMetadata) {
+    yield { text: '', usageMetadata: lastUsageMetadata };
   }
 
   // Save to conversation history

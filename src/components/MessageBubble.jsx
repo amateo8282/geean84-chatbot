@@ -1,11 +1,23 @@
 import { motion } from 'framer-motion';
 import { BubbleBorder } from './DrawnBorder';
 
-export function MessageBubble({ message, isUser }) {
-  // Simple random check to show sound effect (30% chance)
-  const showSfx = !isUser && Math.random() > 0.7;
-  const sfxList = ['두둥', '슥..', '터벅', '탁', '...'];
-  const randomSfx = sfxList[Math.floor(Math.random() * sfxList.length)];
+const SFX_LIST = ['두둥', '슥..', '터벅', '탁', '...'];
+
+// Simple hash from string to get deterministic pseudo-random number (0~1)
+function hashCode(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return (hash >>> 0) / 4294967295;
+}
+
+export function MessageBubble({ message, isUser, chatbotName = '기안84' }) {
+  const id = message.id || '';
+  const hash = hashCode(id);
+  const showSfx = !isUser && hash > 0.7;
+  const randomSfx = SFX_LIST[Math.floor(hash * SFX_LIST.length)];
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 relative`}>
@@ -28,7 +40,7 @@ export function MessageBubble({ message, isUser }) {
       <BubbleBorder isUser={isUser} className="max-w-[80%] md:max-w-[70%]">
         <div className="px-4 py-3">
           {!isUser && (
-            <div className="text-xs text-gray-500 mb-1 font-sans">기안84</div>
+            <div className="text-xs text-gray-500 mb-1 font-sans">{chatbotName}</div>
           )}
           <p
             className="text-lg leading-relaxed whitespace-pre-wrap break-words"
